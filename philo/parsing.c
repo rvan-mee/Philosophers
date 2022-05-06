@@ -6,7 +6,7 @@
 /*   By: rvan-mee <rvan-mee@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/05/04 12:07:29 by rvan-mee      #+#    #+#                 */
-/*   Updated: 2022/05/05 15:56:32 by rvan-mee      ########   odam.nl         */
+/*   Updated: 2022/05/06 14:12:03 by rvan-mee      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include <limits.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <stdio.h>
 
 static int	parsing_error(char *error)
 {
@@ -38,13 +39,13 @@ static int	ft_atoi(char *str)
 	while (str[i] != '\0' && (str[i] >= '0' && str[i] <= '9'))
 	{
 		if (i > 10)
-			return (parsing_error(NULL));
+			return (-1);
 		num *= 10;
 		num += str[i] - '0';
 		i++;
 	}
 	if (str[i] != '\0' || num > INT_MAX)
-		return (parsing_error(NULL));
+		return (-1);
 	return ((int)num);
 }
 
@@ -55,14 +56,10 @@ int	parse_input(int argc, char **argv, t_info *info)
 	i = 1;
 	if (argc < 5 || argc > 6)
 		return (parsing_error("You do not have enough arguments\n"));
-	info->philos_count = ft_atoi(argv[i]);
-	i++;
-	info->time_die = ft_atoi(argv[i]);
-	i++;
-	info->time_eat = ft_atoi(argv[i]);
-	i++;
-	info->time_sleep = ft_atoi(argv[i]);
-	i++;
+	info->philos_count = ft_atoi(argv[i++]);
+	info->time_die = ft_atoi(argv[i++]);
+	info->time_eat = ft_atoi(argv[i++]);
+	info->time_sleep = ft_atoi(argv[i++]);
 	info->philo_has_died = false;
 	if (argc == 5)
 		info->eat_limit_on = false;
@@ -71,8 +68,9 @@ int	parse_input(int argc, char **argv, t_info *info)
 		info->min_times_to_eat = ft_atoi(argv[i]);
 		info->eat_limit_on = true;
 	}
-	if (info->philos_count <= 0 || info->time_die <= 0
-		|| info->time_eat <= 0 || info->time_sleep <= 0)
+	if (info->philos_count <= 0 || info->time_die <= 0 || info->time_eat <= 0
+		|| info->time_sleep <= 0
+		|| (info->eat_limit_on == true && info->min_times_to_eat <= 0))
 		return (parsing_error("Please use an integer thats above 0\n"));
 	return (1);
 }

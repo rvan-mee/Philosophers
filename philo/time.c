@@ -6,13 +6,14 @@
 /*   By: rvan-mee <rvan-mee@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/05/04 13:47:32 by rvan-mee      #+#    #+#                 */
-/*   Updated: 2022/05/06 12:22:55 by rvan-mee      ########   odam.nl         */
+/*   Updated: 2022/05/06 20:12:30 by rvan-mee      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philos.h"
 #include <sys/time.h>
 #include <unistd.h>
+#include <stdio.h>
 
 long	get_current_time_ms(void)
 {
@@ -30,7 +31,7 @@ int	time_since_start(t_philosopher *philo)
 	return (current_time - philo->info->start_time);
 }
 
-void	wait_set_time(int time_to_wait_in_ms)
+void	wait_set_time(int time_to_wait_in_ms, t_philosopher *philo)
 {
 	long	start_time;
 	long	current_time;
@@ -38,6 +39,9 @@ void	wait_set_time(int time_to_wait_in_ms)
 	start_time = get_current_time_ms();
 	while (1)
 	{
+		if (check_for_death(philo) == true
+			|| check_if_should_die(philo) == true)
+			return ;
 		current_time = get_current_time_ms();
 		if (current_time - start_time >= time_to_wait_in_ms)
 			return ;

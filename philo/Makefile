@@ -13,7 +13,8 @@ OBJ = $(addprefix objs/, $(SRC:.c=.o))
 TARGET = philo
 OBJDIR = objs
 
-CFLAGS = -Wall -Werror -Wextra -fsanitize=address -g
+CFLAGS = -Wall -Werror -Wextra -fsanitize=thread -g
+# -fsanitize=address -g
 # -fsanitize=thread -g
 
 $(TARGET): $(OBJ)

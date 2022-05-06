@@ -6,7 +6,7 @@
 /*   By: rvan-mee <rvan-mee@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/05/04 11:52:42 by rvan-mee      #+#    #+#                 */
-/*   Updated: 2022/05/05 18:10:06 by rvan-mee      ########   odam.nl         */
+/*   Updated: 2022/05/06 12:44:25 by rvan-mee      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,11 +60,13 @@ bool	init_philos(t_info *info, t_philosopher *philos)
 	return (true);
 }
 
-void	destroy_forks(t_info *info, t_philosopher *philos)
+int	destroy_forks(t_info *info, t_philosopher *philos)
 {
 	int	i;
 
 	i = 0;
+	if (info->philos_count == 1)
+		return (0);
 	while (i < info->philos_count)
 	{
 		pthread_mutex_destroy(philos[i].right_fork);
@@ -72,10 +74,11 @@ void	destroy_forks(t_info *info, t_philosopher *philos)
 		i++;
 	}
 	if (info->eat_limit_on == false)
-		return ;
+		return (0);
 	pthread_mutex_destroy(info->eat_mutex);
 	free(info->eat_mutex);
 	free(info->meals_eaten);
+	return (0);
 }
 
 void	unlock_both_forks(t_philosopher *philo)

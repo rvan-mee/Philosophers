@@ -6,7 +6,7 @@
 /*   By: rvan-mee <rvan-mee@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/05/04 15:30:25 by rvan-mee      #+#    #+#                 */
-/*   Updated: 2022/05/06 12:22:13 by rvan-mee      ########   odam.nl         */
+/*   Updated: 2022/05/06 20:06:55 by rvan-mee      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 bool	take_forks(t_philosopher *philo)
 {
-	if (philo->id % 2 == 0)
+	if (philo->id % 2 == 0 && philo->info->philos_count % 2 != 1)
 	{
 		if (take_right_fork(philo) == false)
 			return (false);
@@ -40,8 +40,8 @@ bool	take_forks(t_philosopher *philo)
 
 bool	start_eating(t_philosopher *philo)
 {
-	if (check_if_should_die(philo) == true
-		|| check_for_death(philo) == true)
+	if (check_for_death(philo) == true
+		|| check_if_should_die(philo) == true)
 		return (false);
 	philo->last_meal_time = get_current_time_ms();
 	philo_msg(philo, EATING);
@@ -51,25 +51,25 @@ bool	start_eating(t_philosopher *philo)
 		philo->info->meals_eaten[philo->id] += 1;
 		pthread_mutex_unlock(philo->info->eat_mutex);
 	}
-	wait_set_time(philo->info->time_eat);
+	wait_set_time(philo->info->time_eat, philo);
 	unlock_both_forks(philo);
 	return (true);
 }
 
 bool	start_sleeping(t_philosopher *philo)
 {
-	if (check_if_should_die(philo) == true
-		|| check_for_death(philo) == true)
+	if (check_for_death(philo) == true
+		|| check_if_should_die(philo) == true)
 		return (false);
 	philo_msg(philo, SLEEPING);
-	wait_set_time(philo->info->time_eat);
-	return (true);	
+	wait_set_time(philo->info->time_eat, philo);
+	return (true);
 }
 
 bool	start_thinking(t_philosopher *philo)
 {
-	if (check_if_should_die(philo) == true
-		|| check_for_death(philo) == true)
+	if (check_for_death(philo) == true
+		|| check_if_should_die(philo) == true)
 		return (false);
 	philo_msg(philo, THINKING);
 	return (true);
@@ -80,7 +80,7 @@ bool	check_if_should_die(t_philosopher *philo)
 	long	current_time;
 
 	current_time = get_current_time_ms();
-	if (current_time - philo->last_meal_time > philo->info->time_die)
+	if (current_time - philo->last_meal_time >= philo->info->time_die)
 	{
 		pthread_mutex_lock(philo->info->death_check_mutex);
 		if (philo->info->philo_has_died != true)

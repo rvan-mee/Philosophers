@@ -6,7 +6,7 @@
 /*   By: rvan-mee <rvan-mee@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/05/04 11:59:16 by rvan-mee      #+#    #+#                 */
-/*   Updated: 2022/05/06 12:24:46 by rvan-mee      ########   odam.nl         */
+/*   Updated: 2022/05/06 14:14:39 by rvan-mee      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,6 @@
 		when a philosopher dies.
 */
 
-
 typedef struct info_s {
 	long			start_time;
 	int				philos_count;
@@ -69,7 +68,7 @@ typedef struct philosopher_s {
 /* 				forks.c	 				*/
 pthread_mutex_t	*get_new_mutex(void);
 bool			init_philos(t_info *info, t_philosopher *philos);
-void			destroy_forks(t_info *info, t_philosopher *philos);
+int				destroy_forks(t_info *info, t_philosopher *philos);
 void			unlock_both_forks(t_philosopher *philo);
 
 /* 				parsing.c	 			*/
@@ -92,7 +91,7 @@ bool			take_right_fork(t_philosopher *philo);
 
 /*			 	time.c					 */
 long			get_current_time_ms(void);
-void			wait_set_time(int time_to_wait_in_ms);
+void			wait_set_time(int time_to_wait_in_ms, t_philosopher *philo);
 int				time_since_start(t_philosopher *philo);
 
 /* 				utils.c					 */

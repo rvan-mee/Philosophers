@@ -6,7 +6,7 @@
 /*   By: rvan-mee <rvan-mee@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/05/04 11:54:54 by rvan-mee      #+#    #+#                 */
-/*   Updated: 2022/05/05 18:27:57 by rvan-mee      ########   odam.nl         */
+/*   Updated: 2022/05/06 19:51:58 by rvan-mee      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include <stdio.h>
 #include "philos.h"
 
-static int	join_threads(pthread_t *thread_pool, int thread_count)
+static bool	join_threads(pthread_t *thread_pool, int thread_count)
 {
 	int	i;
 
@@ -24,29 +24,32 @@ static int	join_threads(pthread_t *thread_pool, int thread_count)
 	while (i < thread_count)
 	{
 		if (pthread_join(thread_pool[i], NULL) != 0)
-			return (1);
+			return (false);
 		i++;
 	}
-	return (0);
+	return (true);
 }
 
-static int	create_threads(pthread_t *thread_pool, int philos_count, t_philosopher *philos)
+static bool	create_threads(pthread_t *thread_pool,
+	int philos_count, t_philosopher *philos)
 {
 	int	i;
 
 	i = 0;
 	while (i < philos_count)
 	{
-		if (i % 2 == 0 || i == philos_count - 1)
-			usleep(100);
-		if (pthread_create(&thread_pool[i], NULL, &philosopher, &philos[i]) != 0)
-			return (1);
+		if (pthread_create(&thread_pool[i], NULL,
+				&philosopher, &philos[i]) != 0)
+			return (false);
+		if (i % 2 == 0)
+			usleep(250);
 		i++;
 	}
-	return (0);
+	return (true);
 }
 
-static void	free_mallocs_main(pthread_t *threads, t_philosopher *philos, pthread_mutex_t *mutex)
+static void	free_mallocs_main(pthread_t *threads,
+	t_philosopher *philos, pthread_mutex_t *mutex)
 {
 	write(1, "malloc error!\n", 14);
 	if (threads)
@@ -92,9 +95,6 @@ int	main(int argc, char **argv)
 	t_philosopher	*philos;
 	t_info			info;
 
-	setbuf(stdout, NULL);
-
-
 	info.start_time = get_current_time_ms();
 	if (!parse_input(argc, argv, &info))
 		return (1);
@@ -110,12 +110,9 @@ int	main(int argc, char **argv)
 		return (1);
 	if (init_philos(&info, philos) == false)
 		return (1);
-	create_threads(thread_arr, info.philos_count, philos);
-	// error check ?
-	join_threads(thread_arr, info.philos_count);
-	// error check ?
-	if (info.philos_count > 1)
-		destroy_forks(&info, philos);
-	// system("leaks philo");
-	return (0);
+	if (create_threads(thread_arr, info.philos_count, philos) == false)
+		return (1);
+	if (join_threads(thread_arr, info.philos_count) == false)
+		return (1);
+	return (destroy_forks(&info, philos));
 }
