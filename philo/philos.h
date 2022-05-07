@@ -6,7 +6,7 @@
 /*   By: rvan-mee <rvan-mee@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/05/04 11:59:16 by rvan-mee      #+#    #+#                 */
-/*   Updated: 2022/05/06 14:14:39 by rvan-mee      ########   odam.nl         */
+/*   Updated: 2022/05/07 17:31:36 by rvan-mee      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@ typedef struct philosopher_s {
 	pthread_mutex_t	*right_fork;
 	int				id;
 	long			last_meal_time;
+	pthread_mutex_t	*meal_time_mutex;
 }	t_philosopher;
 
 /* 				forks.c	 				*/
@@ -95,6 +96,7 @@ void			wait_set_time(int time_to_wait_in_ms, t_philosopher *philo);
 int				time_since_start(t_philosopher *philo);
 
 /* 				utils.c					 */
+void			monitor_philos(t_info *info, t_philosopher *philo);
 int				ft_strlen(char *str);
 bool			check_for_death(t_philosopher *philo);
 bool			check_for_death_and_eat_limit(t_philosopher *philo);

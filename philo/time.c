@@ -6,7 +6,7 @@
 /*   By: rvan-mee <rvan-mee@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/05/04 13:47:32 by rvan-mee      #+#    #+#                 */
-/*   Updated: 2022/05/06 20:12:30 by rvan-mee      ########   odam.nl         */
+/*   Updated: 2022/05/07 14:48:40 by rvan-mee      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,10 +39,10 @@ void	wait_set_time(int time_to_wait_in_ms, t_philosopher *philo)
 	start_time = get_current_time_ms();
 	while (1)
 	{
+		current_time = get_current_time_ms();
 		if (check_for_death(philo) == true
 			|| check_if_should_die(philo) == true)
 			return ;
-		current_time = get_current_time_ms();
 		if (current_time - start_time >= time_to_wait_in_ms)
 			return ;
 		usleep(250);

@@ -6,7 +6,7 @@
 /*   By: rvan-mee <rvan-mee@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/05/04 13:44:23 by rvan-mee      #+#    #+#                 */
-/*   Updated: 2022/05/06 20:13:16 by rvan-mee      ########   odam.nl         */
+/*   Updated: 2022/05/07 17:45:03 by rvan-mee      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,6 @@ static void	*single_philo(t_philosopher *philo)
 	pthread_mutex_lock(philo->right_fork);
 	wait_set_time(philo->info->time_die, philo);
 	pthread_mutex_unlock(philo->right_fork);
-	philo_msg(philo, DIED);
 	pthread_mutex_destroy(philo->right_fork);
 	if (philo->info->eat_limit_on == true)
 	{
@@ -50,25 +49,27 @@ static void	*single_philo(t_philosopher *philo)
 	return (NULL);
 }
 
-	// if (philo->id % 2 == 1)
-	// 	usleep(100);
 void	*philosopher(void *threadstruct)
 {
 	t_philosopher	*philo;
 
 	philo = (t_philosopher *)threadstruct;
+	if (philo->id % 2 == 1)
+		usleep(250);
+	pthread_mutex_lock(philo->meal_time_mutex);
+	philo->last_meal_time = get_current_time_ms();
+	pthread_mutex_unlock(philo->meal_time_mutex);
 	if (philo->info->philos_count == 1)
 		return (single_philo(philo));
-	philo->last_meal_time = get_current_time_ms();
 	while (check_for_death_and_eat_limit(philo) == false)
 	{
-		if (!take_forks(philo) || check_if_should_die(philo))
+		if (!take_forks(philo))
 			break ;
-		if (!start_eating(philo) || check_if_should_die(philo))
+		if (!start_eating(philo))
 			break ;
-		if (!start_sleeping(philo) || check_if_should_die(philo))
+		if (!start_sleeping(philo))
 			break ;
-		if (!start_thinking(philo) || check_if_should_die(philo))
+		if (!start_thinking(philo))
 			break ;
 	}
 	return (NULL);

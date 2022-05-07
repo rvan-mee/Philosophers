@@ -6,7 +6,7 @@
 /*   By: rvan-mee <rvan-mee@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/05/04 11:58:37 by rvan-mee      #+#    #+#                 */
-/*   Updated: 2022/05/06 15:39:45 by rvan-mee      ########   odam.nl         */
+/*   Updated: 2022/05/07 18:13:24 by rvan-mee      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,42 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
+
+void	set_philos_dead(t_info *info)
+{
+	pthread_mutex_lock(info->death_check_mutex);
+	info->philo_has_died = true;
+	pthread_mutex_unlock(info->death_check_mutex);
+}
+
+void	monitor_philos(t_info *info, t_philosopher *philo)
+{
+	int		i;
+	int		philos_with_max_meals;
+
+	while (1)
+	{
+		usleep(500);
+		i = 0;
+		philos_with_max_meals = 0;
+		while (i < philo->info->philos_count)
+		{
+			if (info->eat_limit_on == true)
+			{
+				pthread_mutex_lock(philo->info->eat_mutex);
+				if (philo->info->meals_eaten[i] >= info->min_times_to_eat)
+					philos_with_max_meals++;
+				pthread_mutex_unlock(philo->info->eat_mutex);
+			}
+			if (info->eat_limit_on == true
+				&& philo->info->philos_count == philos_with_max_meals)
+				return (set_philos_dead(info));
+			if (check_if_should_die(&philo[i]) == true)
+				return ;
+			i++;
+		}
+	}
+}
 
 int	ft_strlen(char *str)
 {
@@ -42,21 +78,12 @@ bool	check_for_death_and_eat_limit(t_philosopher *philo)
 	int	i;
 
 	i = 0;
-	if (philo->info->eat_limit_on == true)
+	pthread_mutex_lock(philo->info->death_check_mutex);
+	if (philo->info->philo_has_died == true)
 	{
-		while (i < philo->info->philos_count)
-		{
-			pthread_mutex_lock(philo->info->eat_mutex);
-			if (philo->info->meals_eaten[i] < philo->info->min_times_to_eat)
-			{
-				pthread_mutex_unlock(philo->info->eat_mutex);
-				break ;
-			}
-			pthread_mutex_unlock(philo->info->eat_mutex);
-			i++;
-		}
-	}
-	if (check_for_death(philo) == true || i == philo->info->philos_count)
+		pthread_mutex_unlock(philo->info->death_check_mutex);
 		return (true);
+	}
+	pthread_mutex_unlock(philo->info->death_check_mutex);
 	return (false);
 }

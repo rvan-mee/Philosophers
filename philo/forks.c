@@ -6,7 +6,7 @@
 /*   By: rvan-mee <rvan-mee@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/05/04 11:52:42 by rvan-mee      #+#    #+#                 */
-/*   Updated: 2022/05/06 12:44:25 by rvan-mee      ########   odam.nl         */
+/*   Updated: 2022/05/07 18:35:51 by rvan-mee      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ pthread_mutex_t	*get_new_mutex(void)
 bool	init_philos(t_info *info, t_philosopher *philos)
 {
 	pthread_mutex_t	*new_fork;
+	pthread_mutex_t	*meal_mutex;
 	int				i;
 
 	i = 0;
@@ -51,7 +52,14 @@ bool	init_philos(t_info *info, t_philosopher *philos)
 		new_fork = get_new_mutex();
 		if (!new_fork)
 			return (false);
+		meal_mutex = get_new_mutex();
+		if (!meal_mutex)
+		{
+			pthread_mutex_destroy(new_fork);
+			return (false);
+		}
 		philos[i].right_fork = new_fork;
+		philos[i].meal_time_mutex = meal_mutex;
 		if (i != 0)
 			philos[i].left_fork = philos[i - 1].right_fork;
 		i++;

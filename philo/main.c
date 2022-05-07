@@ -6,7 +6,7 @@
 /*   By: rvan-mee <rvan-mee@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/05/04 11:54:54 by rvan-mee      #+#    #+#                 */
-/*   Updated: 2022/05/06 19:51:58 by rvan-mee      ########   odam.nl         */
+/*   Updated: 2022/05/07 18:21:21 by rvan-mee      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,6 @@ static bool	create_threads(pthread_t *thread_pool,
 		if (pthread_create(&thread_pool[i], NULL,
 				&philosopher, &philos[i]) != 0)
 			return (false);
-		if (i % 2 == 0)
-			usleep(250);
 		i++;
 	}
 	return (true);
@@ -112,6 +110,7 @@ int	main(int argc, char **argv)
 		return (1);
 	if (create_threads(thread_arr, info.philos_count, philos) == false)
 		return (1);
+	monitor_philos(&info, philos);
 	if (join_threads(thread_arr, info.philos_count) == false)
 		return (1);
 	return (destroy_forks(&info, philos));
