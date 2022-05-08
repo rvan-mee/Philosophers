@@ -6,7 +6,7 @@
 /*   By: rvan-mee <rvan-mee@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/05/04 11:59:16 by rvan-mee      #+#    #+#                 */
-/*   Updated: 2022/05/07 17:31:36 by rvan-mee      ########   odam.nl         */
+/*   Updated: 2022/05/08 14:28:58 by rvan-mee      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ void			unlock_both_forks(t_philosopher *philo);
 int				parse_input(int argc, char **argv, t_info *info);
 
 /* 				philos.c	 			*/
+bool			set_philo_values(t_info *info, t_philosopher *philos, int i);
 void			philo_msg(t_philosopher *philo, int msg);
 void			*philosopher(void *threadstruct);
 

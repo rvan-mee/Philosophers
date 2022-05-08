@@ -6,7 +6,7 @@
 /*   By: rvan-mee <rvan-mee@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/05/04 15:30:25 by rvan-mee      #+#    #+#                 */
-/*   Updated: 2022/05/07 18:20:28 by rvan-mee      ########   odam.nl         */
+/*   Updated: 2022/05/08 15:46:05 by rvan-mee      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ bool	start_sleeping(t_philosopher *philo)
 	if (check_for_death_and_eat_limit(philo))
 		return (false);
 	philo_msg(philo, SLEEPING);
-	wait_set_time(philo->info->time_eat, philo);
+	wait_set_time(philo->info->time_sleep, philo);
 	return (true);
 }
 
@@ -80,7 +80,7 @@ bool	check_if_should_die(t_philosopher *philo)
 
 	pthread_mutex_lock(philo->meal_time_mutex);
 	current_time = get_current_time_ms();
-	if (current_time - philo->last_meal_time >= philo->info->time_die)
+	if (current_time - philo->last_meal_time > philo->info->time_die)
 	{
 		pthread_mutex_unlock(philo->meal_time_mutex);
 		pthread_mutex_lock(philo->info->death_check_mutex);

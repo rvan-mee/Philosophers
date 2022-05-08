@@ -6,7 +6,7 @@
 /*   By: rvan-mee <rvan-mee@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/05/04 11:54:54 by rvan-mee      #+#    #+#                 */
-/*   Updated: 2022/05/07 18:21:21 by rvan-mee      ########   odam.nl         */
+/*   Updated: 2022/05/08 15:51:50 by rvan-mee      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,6 @@ int	main(int argc, char **argv)
 	t_philosopher	*philos;
 	t_info			info;
 
-	info.start_time = get_current_time_ms();
 	if (!parse_input(argc, argv, &info))
 		return (1);
 	thread_arr = malloc(info.philos_count * sizeof(pthread_t));
@@ -108,6 +107,7 @@ int	main(int argc, char **argv)
 		return (1);
 	if (init_philos(&info, philos) == false)
 		return (1);
+	info.start_time = get_current_time_ms();
 	if (create_threads(thread_arr, info.philos_count, philos) == false)
 		return (1);
 	monitor_philos(&info, philos);

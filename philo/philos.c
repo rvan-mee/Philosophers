@@ -6,7 +6,7 @@
 /*   By: rvan-mee <rvan-mee@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/05/04 13:44:23 by rvan-mee      #+#    #+#                 */
-/*   Updated: 2022/05/07 17:45:03 by rvan-mee      ########   odam.nl         */
+/*   Updated: 2022/05/08 15:47:11 by rvan-mee      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,30 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
+
+bool	set_philo_values(t_info *info, t_philosopher *philos, int i)
+{
+	pthread_mutex_t	*new_fork;
+	pthread_mutex_t	*meal_mutex;
+
+	philos[i].info = info;
+	philos[i].id = i;
+	new_fork = get_new_mutex();
+	if (!new_fork)
+		return (false);
+	meal_mutex = get_new_mutex();
+	if (!meal_mutex)
+	{
+		pthread_mutex_destroy(new_fork);
+		return (false);
+	}
+	philos[i].right_fork = new_fork;
+	philos[i].meal_time_mutex = meal_mutex;
+	philos[i].last_meal_time = get_current_time_ms();
+	if (i != 0)
+		philos[i].left_fork = philos[i - 1].right_fork;
+	return (true);
+}
 
 void	philo_msg(t_philosopher *philo, int msg)
 {
@@ -55,7 +79,7 @@ void	*philosopher(void *threadstruct)
 
 	philo = (t_philosopher *)threadstruct;
 	if (philo->id % 2 == 1)
-		usleep(250);
+		usleep(50);
 	pthread_mutex_lock(philo->meal_time_mutex);
 	philo->last_meal_time = get_current_time_ms();
 	pthread_mutex_unlock(philo->meal_time_mutex);

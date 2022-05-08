@@ -6,7 +6,7 @@
 /*   By: rvan-mee <rvan-mee@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/05/04 12:07:29 by rvan-mee      #+#    #+#                 */
-/*   Updated: 2022/05/07 17:20:33 by rvan-mee      ########   odam.nl         */
+/*   Updated: 2022/05/08 14:46:42 by rvan-mee      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,8 +68,8 @@ int	parse_input(int argc, char **argv, t_info *info)
 		info->min_times_to_eat = ft_atoi(argv[i]);
 		info->eat_limit_on = true;
 	}
-	if (info->philos_count <= 0 || info->time_die <= 0 || info->time_eat <= 0
-		|| info->time_sleep <= 0
+	if (info->philos_count <= 0 || info->time_die <= 0
+		|| info->time_eat <= 0 || info->time_sleep <= 0
 		|| (info->eat_limit_on == true && info->min_times_to_eat <= 0))
 		return (parsing_error("Please use an integer thats above 0\n"));
 	return (1);

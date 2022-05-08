@@ -6,7 +6,7 @@
 /*   By: rvan-mee <rvan-mee@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/05/04 11:58:37 by rvan-mee      #+#    #+#                 */
-/*   Updated: 2022/05/07 18:13:24 by rvan-mee      ########   odam.nl         */
+/*   Updated: 2022/05/08 15:48:41 by rvan-mee      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@ void	monitor_philos(t_info *info, t_philosopher *philo)
 
 	while (1)
 	{
-		usleep(500);
 		i = 0;
 		philos_with_max_meals = 0;
 		while (i < philo->info->philos_count)
@@ -48,6 +47,7 @@ void	monitor_philos(t_info *info, t_philosopher *philo)
 				return ;
 			i++;
 		}
+		usleep(250);
 	}
 }
 
