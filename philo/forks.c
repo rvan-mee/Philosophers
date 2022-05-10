@@ -6,7 +6,7 @@
 /*   By: rvan-mee <rvan-mee@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/05/04 11:52:42 by rvan-mee      #+#    #+#                 */
-/*   Updated: 2022/05/08 14:37:24 by rvan-mee      ########   odam.nl         */
+/*   Updated: 2022/05/10 16:55:36 by rvan-mee      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,6 @@
 #include <pthread.h>
 #include <stdlib.h>
 #include <stdio.h>
-
-static void	connect_first_last_forks(t_philosopher *philos, int last)
-{
-	if (last != 0)
-		philos[0].left_fork = philos[last].right_fork;
-	else
-		philos[0].left_fork = NULL;
-}
 
 pthread_mutex_t	*get_new_mutex(void)
 {
@@ -43,13 +35,22 @@ bool	init_philos(t_info *info, t_philosopher *philos)
 	int				i;
 
 	i = 0;
+	info->fork_mutex = malloc(sizeof(pthread_mutex_t) * info->philos_count);
+	if (!info->fork_mutex)
+		return (false);
 	while (i < info->philos_count)
 	{
 		if (set_philo_values(info, philos, i) == false)
 			return (false);
+		if (pthread_mutex_init(&info->fork_mutex[i], NULL) != 0)
+			return (false);
+		if (pthread_mutex_init(&philos[i].meal_time_mutex, NULL) != 0)
+			return (false);
+		if (philos->info->eat_limit_on == true)
+			if (pthread_mutex_init(&philos[i].eat_mutex, NULL) != 0)
+				return (false);
 		i++;
 	}
-	connect_first_last_forks(philos, i - 1);
 	return (true);
 }
 
@@ -62,20 +63,16 @@ int	destroy_forks(t_info *info, t_philosopher *philos)
 		return (0);
 	while (i < info->philos_count)
 	{
-		pthread_mutex_destroy(philos[i].right_fork);
-		free(philos[i].right_fork);
+		pthread_mutex_destroy(&info->fork_mutex[i]);
+		if (info->eat_limit_on == true)
+			pthread_mutex_destroy(&philos[i].eat_mutex);
 		i++;
 	}
-	if (info->eat_limit_on == false)
-		return (0);
-	pthread_mutex_destroy(info->eat_mutex);
-	free(info->eat_mutex);
-	free(info->meals_eaten);
 	return (0);
 }
 
 void	unlock_both_forks(t_philosopher *philo)
 {
-	pthread_mutex_unlock(philo->left_fork);
-	pthread_mutex_unlock(philo->right_fork);
+	pthread_mutex_unlock(&philo->info->fork_mutex[philo->left]);
+	pthread_mutex_unlock(&philo->info->fork_mutex[philo->right]);
 }

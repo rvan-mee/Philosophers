@@ -6,7 +6,7 @@
 /*   By: rvan-mee <rvan-mee@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/05/04 13:47:32 by rvan-mee      #+#    #+#                 */
-/*   Updated: 2022/05/08 15:45:34 by rvan-mee      ########   odam.nl         */
+/*   Updated: 2022/05/10 13:02:15 by rvan-mee      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,24 +31,18 @@ int	time_since_start(t_philosopher *philo)
 	return (current_time - philo->info->start_time);
 }
 
-#include <stdlib.h>
 void	wait_set_time(int time_to_wait_in_ms, t_philosopher *philo)
 {
 	long	start_time;
-	// long	current_time;
 
 	start_time = get_current_time_ms();
-	(void)philo;
-	while ((get_current_time_ms() - start_time) < time_to_wait_in_ms) // (start_time - get_current_time_ms()) > time_to_wait_in_ms
+	while ((get_current_time_ms() - start_time) < time_to_wait_in_ms)
 	{
-		// if (philo)
-		// {
-		// 	if (check_for_death_and_eat_limit(philo) == true)
-		// 		return ;
-		// }
-		// current_time = get_current_time_ms();
-		// if (current_time - start_time >= time_to_wait_in_ms)
-		// 	return ;
+		if (philo)
+		{
+			if (check_for_death_and_eat_limit(philo) == true)
+				return ;
+		}
 		usleep(250);
 	}
 }

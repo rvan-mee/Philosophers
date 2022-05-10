@@ -6,7 +6,7 @@
 /*   By: rvan-mee <rvan-mee@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/05/04 11:59:16 by rvan-mee      #+#    #+#                 */
-/*   Updated: 2022/05/08 14:28:58 by rvan-mee      ########   odam.nl         */
+/*   Updated: 2022/05/10 12:27:27 by rvan-mee      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,22 +48,25 @@ typedef struct info_s {
 	int				time_eat;
 	int				time_sleep;
 
-	int				*meals_eaten;
-	pthread_mutex_t	*eat_mutex;
 	int				min_times_to_eat;
 	bool			eat_limit_on;
 
 	bool			philo_has_died;
-	pthread_mutex_t	*death_check_mutex;
+	pthread_mutex_t	death_check_mutex;
+	pthread_mutex_t	*fork_mutex;
 }	t_info;
 
 typedef struct philosopher_s {
 	t_info			*info;
-	pthread_mutex_t	*left_fork;
-	pthread_mutex_t	*right_fork;
+	int				left;
+	int				right;
 	int				id;
+
+	int				meals_eaten;
+	pthread_mutex_t	eat_mutex;
+
 	long			last_meal_time;
-	pthread_mutex_t	*meal_time_mutex;
+	pthread_mutex_t	meal_time_mutex;
 }	t_philosopher;
 
 /* 				forks.c	 				*/
