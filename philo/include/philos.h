@@ -6,7 +6,7 @@
 /*   By: rvan-mee <rvan-mee@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/05/04 11:59:16 by rvan-mee      #+#    #+#                 */
-/*   Updated: 2022/05/10 12:27:27 by rvan-mee      ########   odam.nl         */
+/*   Updated: 2022/05/11 11:59:18 by rvan-mee      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,6 @@ typedef struct philosopher_s {
 }	t_philosopher;
 
 /* 				forks.c	 				*/
-pthread_mutex_t	*get_new_mutex(void);
 bool			init_philos(t_info *info, t_philosopher *philos);
 int				destroy_forks(t_info *info, t_philosopher *philos);
 void			unlock_both_forks(t_philosopher *philo);
@@ -80,7 +79,7 @@ int				parse_input(int argc, char **argv, t_info *info);
 
 /* 				philos.c	 			*/
 bool			set_philo_values(t_info *info, t_philosopher *philos, int i);
-void			philo_msg(t_philosopher *philo, int msg);
+bool			philo_msg(t_philosopher *philo, int msg);
 void			*philosopher(void *threadstruct);
 
 /*			 	tasks.c	 				*/

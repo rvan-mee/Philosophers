@@ -6,7 +6,7 @@
 /*   By: rvan-mee <rvan-mee@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/05/04 11:52:42 by rvan-mee      #+#    #+#                 */
-/*   Updated: 2022/05/10 16:55:36 by rvan-mee      ########   odam.nl         */
+/*   Updated: 2022/05/11 11:57:29 by rvan-mee      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,21 +14,6 @@
 #include <pthread.h>
 #include <stdlib.h>
 #include <stdio.h>
-
-pthread_mutex_t	*get_new_mutex(void)
-{
-	pthread_mutex_t	*new_mutex;
-
-	new_mutex = malloc(sizeof(pthread_mutex_t) * 1);
-	if (!new_mutex)
-		return (NULL);
-	if (pthread_mutex_init(new_mutex, NULL) != 0)
-	{
-		free(new_mutex);
-		return (NULL);
-	}
-	return (new_mutex);
-}
 
 bool	init_philos(t_info *info, t_philosopher *philos)
 {

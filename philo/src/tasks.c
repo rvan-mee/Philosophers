@@ -6,7 +6,7 @@
 /*   By: rvan-mee <rvan-mee@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/05/04 15:30:25 by rvan-mee      #+#    #+#                 */
-/*   Updated: 2022/05/10 20:41:05 by rvan-mee      ########   odam.nl         */
+/*   Updated: 2022/05/11 12:06:42 by rvan-mee      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,45 +16,32 @@
 
 bool	take_forks(t_philosopher *philo)
 {
-	if (check_for_death_and_eat_limit(philo) == true)
+	pthread_mutex_lock(&philo->info->fork_mutex[philo->right]);
+	if (philo_msg(philo, TAKE_FORK) == false)
+	{
+		pthread_mutex_unlock(&philo->info->fork_mutex[philo->right]);
 		return (false);
-	// pthread_mutex_lock(&philo->eat_mutex);
-	// if (philo->last_meal_time - get_current_time_ms()
-	// 	< philo->info->time_eat + philo->info->time_sleep / 2
-	// 	&& philo->meals_eaten != 0)
-	// 	wait_set_time(philo->info->time_eat / 2, philo);
-	// pthread_mutex_unlock(&philo->eat_mutex);
-	// if (check_for_death_and_eat_limit(philo) == true)
-	// 	return (false);
-	
-	// if (philo->id % 2 == 0)
-	// {
-	// 	pthread_mutex_lock(&philo->info->fork_mutex[philo->left]);
-	// 	philo_msg(philo, TAKE_FORK);
-	// 	pthread_mutex_lock(&philo->info->fork_mutex[philo->right]);
-	// 	philo_msg(philo, TAKE_FORK);
-	// }
-	// else
-	// {
-		pthread_mutex_lock(&philo->info->fork_mutex[philo->right]);
-		philo_msg(philo, TAKE_FORK);
-		pthread_mutex_lock(&philo->info->fork_mutex[philo->left]);
-		philo_msg(philo, TAKE_FORK);
-	// }
+	}
+	pthread_mutex_lock(&philo->info->fork_mutex[philo->left]);
+	if (philo_msg(philo, TAKE_FORK) == false)
+	{
+		pthread_mutex_unlock(&philo->info->fork_mutex[philo->right]);
+		pthread_mutex_unlock(&philo->info->fork_mutex[philo->left]);
+		return (false);
+	}
 	return (true);
 }
 
 bool	start_eating(t_philosopher *philo)
 {
-	if (check_for_death_and_eat_limit(philo) == true)
+	pthread_mutex_lock(&philo->meal_time_mutex);
+	philo->last_meal_time = get_current_time_ms();
+	pthread_mutex_unlock(&philo->meal_time_mutex);
+	if (philo_msg(philo, EATING) == false)
 	{
 		unlock_both_forks(philo);
 		return (false);
 	}
-	pthread_mutex_lock(&philo->meal_time_mutex);
-	philo->last_meal_time = get_current_time_ms();
-	pthread_mutex_unlock(&philo->meal_time_mutex);
-	philo_msg(philo, EATING);
 	if (philo->info->eat_limit_on == true)
 	{
 		pthread_mutex_lock(&philo->eat_mutex);
@@ -68,19 +55,16 @@ bool	start_eating(t_philosopher *philo)
 
 bool	start_sleeping(t_philosopher *philo)
 {
-	if (check_for_death_and_eat_limit(philo))
+	if (philo_msg(philo, SLEEPING) == false)
 		return (false);
-	philo_msg(philo, SLEEPING);
 	wait_set_time(philo->info->time_sleep, philo);
 	return (true);
 }
 
 bool	start_thinking(t_philosopher *philo)
 {
-	// usleep(250);
-	if (check_for_death_and_eat_limit(philo))
+	if (philo_msg(philo, THINKING) == false)
 		return (false);
-	philo_msg(philo, THINKING);
 	return (true);
 }
 

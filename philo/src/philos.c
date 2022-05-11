@@ -6,7 +6,7 @@
 /*   By: rvan-mee <rvan-mee@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/05/04 13:44:23 by rvan-mee      #+#    #+#                 */
-/*   Updated: 2022/05/10 18:04:05 by rvan-mee      ########   odam.nl         */
+/*   Updated: 2022/05/11 17:26:44 by rvan-mee      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,13 +26,13 @@ bool	set_philo_values(t_info *info, t_philosopher *philos, int i)
 	return (true);
 }
 
-void	philo_msg(t_philosopher *philo, int msg)
+bool	philo_msg(t_philosopher *philo, int msg)
 {
 	int	time;
 
 	time = time_since_start(philo);
-	if (check_for_death_and_eat_limit(philo))
-		return ;
+	if (check_for_death_and_eat_limit(philo) == true)
+		return (false);
 	if (msg == TAKE_FORK)
 		printf("%d %d has taken a fork\n", time, philo->id + 1);
 	if (msg == EATING)
@@ -43,6 +43,7 @@ void	philo_msg(t_philosopher *philo, int msg)
 		printf("%d %d is thinking\n", time, philo->id + 1);
 	if (msg == DIED)
 		printf("%d %d died\n", time, philo->id + 1);
+	return (true);
 }
 
 static void	*single_philo(t_philosopher *philo)
@@ -69,7 +70,7 @@ void	*philosopher(void *threadstruct)
 	if (philo->info->philos_count == 1)
 		return (single_philo(philo));
 	if (philo->id % 2 == 1)
-		usleep(250);
+		usleep(500);
 	while (1)
 	{
 		if (!take_forks(philo))
