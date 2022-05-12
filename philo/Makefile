@@ -6,7 +6,7 @@
 #    By: rvan-mee <rvan-mee@student.42.fr>            +#+                      #
 #                                                    +#+                       #
 #    Created: 2022/05/11 18:10:38 by rvan-mee      #+#    #+#                  #
-#    Updated: 2022/05/11 18:12:29 by rvan-mee      ########   odam.nl          #
+#    Updated: 2022/05/12 12:05:06 by rvan-mee      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,6 @@ SRC =	main.c			\
 		philos.c		\
 		tasks.c			\
 		time.c			\
-		tasks_utils.c 	\
 
 
 OBJ = $(addprefix objs/, $(SRC:.c=.o))

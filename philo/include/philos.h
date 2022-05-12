@@ -6,7 +6,7 @@
 /*   By: rvan-mee <rvan-mee@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/05/04 11:59:16 by rvan-mee      #+#    #+#                 */
-/*   Updated: 2022/05/11 11:59:18 by rvan-mee      ########   odam.nl         */
+/*   Updated: 2022/05/12 15:42:39 by rvan-mee      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,6 @@
 		if not specified the simulation stops
 		when a philosopher dies.
 */
-
 typedef struct info_s {
 	long			start_time;
 	int				philos_count;
@@ -70,16 +69,18 @@ typedef struct philosopher_s {
 }	t_philosopher;
 
 /* 				forks.c	 				*/
+bool			init_info(t_info *info);
 bool			init_philos(t_info *info, t_philosopher *philos);
-int				destroy_forks(t_info *info, t_philosopher *philos);
+int				destroy_and_free_mutexes(t_info *info, t_philosopher *philos,
+					pthread_t *threads, int return_value);
 void			unlock_both_forks(t_philosopher *philo);
 
 /* 				parsing.c	 			*/
 int				parse_input(int argc, char **argv, t_info *info);
 
 /* 				philos.c	 			*/
-bool			set_philo_values(t_info *info, t_philosopher *philos, int i);
-bool			philo_msg(t_philosopher *philo, int msg);
+void			set_philo_values(t_info *info, t_philosopher *philos, int i);
+bool			display_msg_if_not_dead(t_philosopher *philo, int msg);
 void			*philosopher(void *threadstruct);
 
 /*			 	tasks.c	 				*/
@@ -89,19 +90,14 @@ bool			start_sleeping(t_philosopher *philo);
 bool			start_thinking(t_philosopher *philo);
 bool			check_if_should_die(t_philosopher *philo);
 
-/* 				tasks_utils.c			*/
-bool			take_left_fork(t_philosopher *philo);
-bool			take_right_fork(t_philosopher *philo);
-
 /*			 	time.c					 */
 long			get_current_time_ms(void);
 void			wait_set_time(int time_to_wait_in_ms, t_philosopher *philo);
 int				time_since_start(t_philosopher *philo);
 
 /* 				utils.c					 */
+void			set_philos_dead(t_info *info);		 
 void			monitor_philos(t_info *info, t_philosopher *philo);
-int				ft_strlen(char *str);
-bool			check_for_death(t_philosopher *philo);
 bool			check_for_death_and_eat_limit(t_philosopher *philo);
 
 #endif

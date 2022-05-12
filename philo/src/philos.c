@@ -6,7 +6,7 @@
 /*   By: rvan-mee <rvan-mee@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/05/04 13:44:23 by rvan-mee      #+#    #+#                 */
-/*   Updated: 2022/05/11 17:26:44 by rvan-mee      ########   odam.nl         */
+/*   Updated: 2022/05/12 14:38:57 by rvan-mee      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,16 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-bool	set_philo_values(t_info *info, t_philosopher *philos, int i)
+/*
+	* Function to initiate a given philosopher struct 
+	* with the given parameters.
+	* @param *info pointer to the info struct that 
+	* will be stored inside the philosopher.
+	* @param *philos a pointer to the philosopher 
+	* where the data has to be set.
+	* @param i intiger resembling the philosopher's id.
+*/
+void	set_philo_values(t_info *info, t_philosopher *philos, int i)
 {
 	philos[i].info = info;
 	philos[i].id = i;
@@ -23,10 +32,19 @@ bool	set_philo_values(t_info *info, t_philosopher *philos, int i)
 	philos[i].right = (i + 1) % info->philos_count;
 	philos[i].meals_eaten = 0;
 	philos[i].last_meal_time = get_current_time_ms();
-	return (true);
 }
 
-bool	philo_msg(t_philosopher *philo, int msg)
+/*
+	* Funciton to handle message printing.
+	* Before a message is printed it checks if a philosoper
+	* has died or (if specified) the eat limit is reached.
+	* @param *philo The philosopher that is sending the message.
+	* @param msg An integer to choose what message
+	* to print (defined in the header).
+	* @return if the philosopher has died whilst trying to print
+	* a message [false] else [true].
+*/
+bool	display_msg_if_not_dead(t_philosopher *philo, int msg)
 {
 	int	time;
 
@@ -46,19 +64,24 @@ bool	philo_msg(t_philosopher *philo, int msg)
 	return (true);
 }
 
+/*
+	* Fuction to handle a single philosopher.
+	* @param *philo Pointer to the philosoper.
+*/
 static void	*single_philo(t_philosopher *philo)
 {
-	philo_msg(philo, TAKE_FORK);
+	display_msg_if_not_dead(philo, TAKE_FORK);
 	pthread_mutex_lock(&philo->info->fork_mutex[philo->right]);
 	wait_set_time(philo->info->time_die, philo);
 	pthread_mutex_unlock(&philo->info->fork_mutex[philo->right]);
-	pthread_mutex_destroy(&philo->info->fork_mutex[philo->right]);
-	if (philo->info->eat_limit_on == true)
-		pthread_mutex_destroy(&philo->eat_mutex);
-	free(philo->info->fork_mutex);
 	return (NULL);
 }
 
+/*
+	* Main philosopher function that calls all the tasks.
+	* @param *threadstruct Void pointer that is being cast to
+	* a philosopher struct.
+*/
 void	*philosopher(void *threadstruct)
 {
 	t_philosopher	*philo;

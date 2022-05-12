@@ -6,7 +6,7 @@
 /*   By: rvan-mee <rvan-mee@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/05/04 12:07:29 by rvan-mee      #+#    #+#                 */
-/*   Updated: 2022/05/08 14:46:42 by rvan-mee      ########   odam.nl         */
+/*   Updated: 2022/05/12 14:10:55 by rvan-mee      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,19 +16,31 @@
 #include <unistd.h>
 #include <stdio.h>
 
+/*
+	* Function to display the correct input parameters when launching the program
+	* from a terminal.
+	* If a string is given it will display it before the standard error message.
+	* @param *error A string to be displayed before the standard error messages.
+	* Can be set to NULL.
+	* @return 0
+*/
 static int	parsing_error(char *error)
 {
 	if (error)
-		write(1, error, ft_strlen(error));
-	write(1, "./philo ", 9);
-	write(1, "[number_of_philosophers] ", 25);
-	write(1, "[time_to_die] ", 14);
-	write(1, "[time_to_eat] ", 14);
-	write(1, "[time_to_sleep]\n", 16);
-	write(1, "Optional: [number_of_times_each_philosopher_must_eat]\n", 54);
+		printf("%s", error);
+	printf("./philo [number_of_philosophers] [time_to_die] ");
+	printf("[time_to_eat] [time_to_sleep]\n");
+	printf("Optional: [number_of_times_each_philosopher_must_eat]\n");
 	return (0);
 }
 
+/*
+	* Custom atoi: Only handles positive integers.
+	* @param *str Pointer to the string to be converted to an integer.
+	* @return If the string only consists of numbers and does not reach
+	* higher then the INT_MAX it will return a converted int.
+	* If the input is incorrect it will return -1.
+*/
 static int	ft_atoi(char *str)
 {
 	int		i;
@@ -49,6 +61,14 @@ static int	ft_atoi(char *str)
 	return ((int)num);
 }
 
+/*
+	* Function to parse the input and set
+	* the values inside the given info struct.
+	* @param argc Argument count from the terminal.
+	* @param **argv 2D array of the input given from the terminal.
+	* @param *info a pointer to the info struct where the data will be set.
+	* @return On correct input [1] else [0].
+*/
 int	parse_input(int argc, char **argv, t_info *info)
 {
 	int	i;

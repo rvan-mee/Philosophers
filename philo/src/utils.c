@@ -6,7 +6,7 @@
 /*   By: rvan-mee <rvan-mee@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/05/04 11:58:37 by rvan-mee      #+#    #+#                 */
-/*   Updated: 2022/05/10 12:50:17 by rvan-mee      ########   odam.nl         */
+/*   Updated: 2022/05/12 11:41:11 by rvan-mee      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+/*
+	* Function to set the philo_has_died boolian inside the info struct to true.
+	* @param *info pointer to the info struct containing philo_has_died.
+*/
 void	set_philos_dead(t_info *info)
 {
 	pthread_mutex_lock(&info->death_check_mutex);
@@ -22,6 +26,12 @@ void	set_philos_dead(t_info *info)
 	pthread_mutex_unlock(&info->death_check_mutex);
 }
 
+/*
+	* Function to monitor all the philosophers for their deaths
+	* and (if specified) if the eat limit has been reached. 
+	* @param *info Pointer to the info struct containing the eat limit information.
+	* @param *philo Pointer to an array of philosophers to monitor.
+*/
 void	monitor_philos(t_info *info, t_philosopher *philo)
 {
 	int		i;
@@ -51,33 +61,14 @@ void	monitor_philos(t_info *info, t_philosopher *philo)
 	}
 }
 
-int	ft_strlen(char *str)
-{
-	int	i;
-
-	i = 0;
-	while (str[i] != '\0')
-		i++;
-	return (i);
-}
-
-bool	check_for_death(t_philosopher *philo)
-{
-	pthread_mutex_lock(&philo->info->death_check_mutex);
-	if (philo->info->philo_has_died == true)
-	{
-		pthread_mutex_unlock(&philo->info->death_check_mutex);
-		return (true);
-	}
-	pthread_mutex_unlock(&philo->info->death_check_mutex);
-	return (false);
-}
-
+/*
+	* Function to check if the death or eat limit has been reached.
+	* @param *philo pointer to a philosopher to get access to the death data.
+	* @return if a philosopher has died
+	* or reached the eat limit [true] else [false].
+*/
 bool	check_for_death_and_eat_limit(t_philosopher *philo)
 {
-	int	i;
-
-	i = 0;
 	pthread_mutex_lock(&philo->info->death_check_mutex);
 	if (philo->info->philo_has_died == true)
 	{
