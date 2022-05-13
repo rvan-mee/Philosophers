@@ -6,7 +6,7 @@
 /*   By: rvan-mee <rvan-mee@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/05/04 13:44:23 by rvan-mee      #+#    #+#                 */
-/*   Updated: 2022/05/12 14:38:57 by rvan-mee      ########   odam.nl         */
+/*   Updated: 2022/05/13 14:20:09 by rvan-mee      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,23 @@ static void	*single_philo(t_philosopher *philo)
 }
 
 /*
+	* Function to check if all threads were created.
+	* @param *philo Pointer to the philosopher to access thread data.
+	* @return If all threads were created properly [true] else [false].
+*/
+static bool	thread_creation_check(t_philosopher *philo)
+{
+	int	created_threads;
+
+	pthread_mutex_lock(&philo->info->creation_check);
+	created_threads = philo->info->created_threads;
+	pthread_mutex_unlock(&philo->info->creation_check);
+	if (created_threads != philo->info->philos_count)
+		return (false);
+	return (true);
+}
+
+/*
 	* Main philosopher function that calls all the tasks.
 	* @param *threadstruct Void pointer that is being cast to
 	* a philosopher struct.
@@ -87,6 +104,9 @@ void	*philosopher(void *threadstruct)
 	t_philosopher	*philo;
 
 	philo = (t_philosopher *)threadstruct;
+	printf("starting thread %d\n", philo->id);
+	if (thread_creation_check(philo) == false)
+		return (NULL);
 	pthread_mutex_lock(&philo->meal_time_mutex);
 	philo->last_meal_time = get_current_time_ms();
 	pthread_mutex_unlock(&philo->meal_time_mutex);

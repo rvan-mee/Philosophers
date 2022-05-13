@@ -6,7 +6,7 @@
 /*   By: rvan-mee <rvan-mee@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/05/04 11:54:54 by rvan-mee      #+#    #+#                 */
-/*   Updated: 2022/05/12 15:43:00 by rvan-mee      ########   odam.nl         */
+/*   Updated: 2022/05/13 14:13:00 by rvan-mee      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,43 @@ static bool	join_threads(pthread_t *thread_pool, int thread_count)
 }
 
 /*
+	* Function to destroythe assigned mutexes.
+	* After destroying the mutexes it will free the
+	* philosophers, fork mutexes and the thread array.
+	* @param *info Pointer to the into struct.
+	* @param *philos Pointer to an array of all philosophers.
+	* @param return_value Integer resembling the return value of this function.
+	* @return [return_value]
+*/
+int	join_threads_and_free_data(t_info *info,
+		t_philosopher *philos, pthread_t *threads, int return_value)
+{
+	int	i;
+	int	thread_count;
+
+	i = 0;
+	pthread_mutex_lock(&info->creation_check);
+	thread_count = info->created_threads;
+	pthread_mutex_unlock(&info->creation_check);
+	if (join_threads(threads, thread_count) == false)
+		return (return_value);
+	pthread_mutex_destroy(&info->death_check_mutex);
+	pthread_mutex_destroy(&info->creation_check);
+	while (i < info->philos_count)
+	{
+		pthread_mutex_destroy(&info->fork_mutex[i]);
+		pthread_mutex_destroy(&philos[i].meal_time_mutex);
+		if (info->eat_limit_on == true)
+			pthread_mutex_destroy(&philos[i].eat_mutex);
+		i++;
+	}
+	free(philos);
+	free(info->fork_mutex);
+	free(threads);
+	return (return_value);
+}
+
+/*
 	* Function to create and start the threads.
 	* @param *thread_pool Pointer to the array of threads.
 	* @param philos_count Integer resembling the amount of philosophers.
@@ -52,13 +89,21 @@ static bool	create_threads(pthread_t *thread_pool,
 
 	i = 0;
 	info->start_time = get_current_time_ms();
+	pthread_mutex_lock(&info->creation_check);
+	info->created_threads = 0;
 	while (i < philos_count)
 	{
 		if (pthread_create(&thread_pool[i], NULL,
 				&philosopher, &philos[i]) != 0)
+		{
+			pthread_mutex_unlock(&info->creation_check);
+			printf("Thread creation error\n");
 			return (false);
+		}
 		i++;
+		info->created_threads = i;
 	}
+	pthread_mutex_unlock(&info->creation_check);
 	return (true);
 }
 
@@ -96,13 +141,7 @@ int	main(int argc, char **argv)
 	if (init_philos(&info, philos) == false)
 		return (1);
 	if (create_threads(thread_arr, info.philos_count, philos, &info) == false)
-	{
-		set_philos_dead(&info);
-		usleep(100000);
-		return (destroy_and_free_mutexes(&info, philos, thread_arr, 1));
-	}
+		return (join_threads_and_free_data(&info, philos, thread_arr, 1));
 	monitor_philos(&info, philos);
-	if (join_threads(thread_arr, info.philos_count) == false)
-		return (destroy_and_free_mutexes(&info, philos, thread_arr, 1));
-	return (destroy_and_free_mutexes(&info, philos, thread_arr, 0));
+	return (join_threads_and_free_data(&info, philos, thread_arr, 0));
 }

@@ -6,7 +6,7 @@
 /*   By: rvan-mee <rvan-mee@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/05/04 11:58:37 by rvan-mee      #+#    #+#                 */
-/*   Updated: 2022/05/12 11:41:11 by rvan-mee      ########   odam.nl         */
+/*   Updated: 2022/05/13 14:22:23 by rvan-mee      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,4 +77,15 @@ bool	check_for_death_and_eat_limit(t_philosopher *philo)
 	}
 	pthread_mutex_unlock(&philo->info->death_check_mutex);
 	return (false);
+}
+
+/*
+	* Function to unlock the given philosopher's fork mutexes.
+	* @param *philo Pointer to the philosopher who's mutexes need
+	* to be unlocked.
+*/
+void	unlock_both_forks(t_philosopher *philo)
+{
+	pthread_mutex_unlock(&philo->info->fork_mutex[philo->left]);
+	pthread_mutex_unlock(&philo->info->fork_mutex[philo->right]);
 }

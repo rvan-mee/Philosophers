@@ -6,7 +6,7 @@
 /*   By: rvan-mee <rvan-mee@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/05/04 11:59:16 by rvan-mee      #+#    #+#                 */
-/*   Updated: 2022/05/12 15:42:39 by rvan-mee      ########   odam.nl         */
+/*   Updated: 2022/05/13 14:15:44 by rvan-mee      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,8 @@ typedef struct info_s {
 
 	bool			philo_has_died;
 	pthread_mutex_t	death_check_mutex;
+	pthread_mutex_t	creation_check;
+	int				created_threads;
 	pthread_mutex_t	*fork_mutex;
 }	t_info;
 
@@ -68,12 +70,11 @@ typedef struct philosopher_s {
 	pthread_mutex_t	meal_time_mutex;
 }	t_philosopher;
 
-/* 				forks.c	 				*/
+/* 				init.c	 				*/
 bool			init_info(t_info *info);
 bool			init_philos(t_info *info, t_philosopher *philos);
-int				destroy_and_free_mutexes(t_info *info, t_philosopher *philos,
+int				join_threads_and_free_data(t_info *info, t_philosopher *philos,
 					pthread_t *threads, int return_value);
-void			unlock_both_forks(t_philosopher *philo);
 
 /* 				parsing.c	 			*/
 int				parse_input(int argc, char **argv, t_info *info);
@@ -96,8 +97,9 @@ void			wait_set_time(int time_to_wait_in_ms, t_philosopher *philo);
 int				time_since_start(t_philosopher *philo);
 
 /* 				utils.c					 */
-void			set_philos_dead(t_info *info);		 
+void			set_philos_dead(t_info *info);
 void			monitor_philos(t_info *info, t_philosopher *philo);
 bool			check_for_death_and_eat_limit(t_philosopher *philo);
+void			unlock_both_forks(t_philosopher *philo);
 
 #endif

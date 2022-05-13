@@ -6,18 +6,17 @@
 #    By: rvan-mee <rvan-mee@student.42.fr>            +#+                      #
 #                                                    +#+                       #
 #    Created: 2022/05/11 18:10:38 by rvan-mee      #+#    #+#                  #
-#    Updated: 2022/05/12 12:05:06 by rvan-mee      ########   odam.nl          #
+#    Updated: 2022/05/13 14:16:16 by rvan-mee      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
 SRC =	main.c			\
-		forks.c			\
+		init.c			\
 		parsing.c		\
 		utils.c			\
 		philos.c		\
 		tasks.c			\
 		time.c			\
-
 
 OBJ = $(addprefix objs/, $(SRC:.c=.o))
 
@@ -39,13 +38,20 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
+all: $(TARGET)
+
 run:
 	./$(TARGET) 5 800 200 200
 
 clean:
-	rm -f $(OBJ)
-	rm -f $(TARGET)
+	@echo Cleaning Object Files
+	@rm -f $(OBJ)
 
-re: clean all
+fclean: clean
+	@echo Cleaning All Remaining Files
+	@rm -f $(TARGET)
+	@rm -rf objs
 
-all: $(TARGET)
+re: fclean all
+
+.PHONY: all clean fclean re bonus
