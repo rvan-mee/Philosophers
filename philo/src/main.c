@@ -6,7 +6,7 @@
 /*   By: rvan-mee <rvan-mee@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/05/04 11:54:54 by rvan-mee      #+#    #+#                 */
-/*   Updated: 2022/05/13 14:13:00 by rvan-mee      ########   odam.nl         */
+/*   Updated: 2022/05/13 14:59:39 by rvan-mee      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,6 @@ static bool	create_threads(pthread_t *thread_pool,
 	int	i;
 
 	i = 0;
-	info->start_time = get_current_time_ms();
 	pthread_mutex_lock(&info->creation_check);
 	info->created_threads = 0;
 	while (i < philos_count)
@@ -102,7 +101,9 @@ static bool	create_threads(pthread_t *thread_pool,
 		}
 		i++;
 		info->created_threads = i;
+		usleep(250);
 	}
+	info->start_time = get_current_time_ms();
 	pthread_mutex_unlock(&info->creation_check);
 	return (true);
 }

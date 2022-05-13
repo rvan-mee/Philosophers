@@ -6,7 +6,7 @@
 /*   By: rvan-mee <rvan-mee@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/05/04 13:44:23 by rvan-mee      #+#    #+#                 */
-/*   Updated: 2022/05/13 14:20:09 by rvan-mee      ########   odam.nl         */
+/*   Updated: 2022/05/13 14:51:41 by rvan-mee      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,6 @@ void	*philosopher(void *threadstruct)
 	t_philosopher	*philo;
 
 	philo = (t_philosopher *)threadstruct;
-	printf("starting thread %d\n", philo->id);
 	if (thread_creation_check(philo) == false)
 		return (NULL);
 	pthread_mutex_lock(&philo->meal_time_mutex);
