@@ -1,0 +1,5 @@
+-	Data race
+-	fix eat limit
+-	make sleep not dependant on tte / ttd
+-	add extra sleep after it has passed (philo_count / 2) cycles?
+-	norminette
