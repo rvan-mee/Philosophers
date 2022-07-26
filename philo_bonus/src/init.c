@@ -6,7 +6,7 @@
 /*   By: rvan-mee <rvan-mee@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/18 12:02:06 by rvan-mee      #+#    #+#                 */
-/*   Updated: 2022/07/18 20:02:27 by rvan-mee      ########   odam.nl         */
+/*   Updated: 2022/07/26 14:38:19 by rvan-mee      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/**
+ * @brief			Function to set the named semaphores name inside the
+ * 					philosopher_data struct.
+ * @param	philo	Pointer to the philosopher_data struct
+ * 					which needs its semaphore name set.
+ * @param	id		The id of the pilosopher.
+ * @return			N/A
+*/
 static void	set_checking_sem_name(t_philo_data *philo, int32_t id)
 {
 	size_t	i;
@@ -25,6 +33,8 @@ static void	set_checking_sem_name(t_philo_data *philo, int32_t id)
 		philo->checking_sem_name[i] = "/philo_"[i];
 		i++;
 	}
+	if (id == 0)
+		philo->checking_sem_name[i++] = (id % 10 + '0');
 	while (id != 0)
 	{
 		philo->checking_sem_name[i] = (id % 10 + '0');
@@ -34,6 +44,11 @@ static void	set_checking_sem_name(t_philo_data *philo, int32_t id)
 	philo->checking_sem_name[i] = '\0';
 }
 
+/**
+ * @brief		Function used to initialize the checking semaphore for a philo.
+ * @param philo	Pointer to a philosopher's struct containing the semaphore.
+ * @return		0 Success / -1 sem_open Failed
+*/
 static int32_t	create_checking_semaphore(t_philo_data *philo)
 {
 	sem_unlink(philo->checking_sem_name);
@@ -44,19 +59,15 @@ static int32_t	create_checking_semaphore(t_philo_data *philo)
 		printf("%s", SEM_FAIL);
 		return (-1);
 	}
+	sem_unlink(philo->checking_sem_name);
 	return (0);
 }
 
-static void	clear_created_semaphores(t_info *info, int32_t philo_count)
-{
-	while (philo_count >= 0)
-	{
-		sem_wait(info->data[philo_count].checking_sem);
-		sem_unlink(info->data[philo_count].checking_sem_name);
-		philo_count--;
-	}
-}
-
+/**
+ * @brief		Function to initialize all philos and their data.
+ * @param info	Pointer to the info struct.
+ * @return		N/A / Exit on any fails
+*/
 void	init_philo_data(t_info *info)
 {
 	size_t	i;
@@ -67,7 +78,7 @@ void	init_philo_data(t_info *info)
 	info->eat_limit_sem = SEM_FAILED;
 	info->data = malloc(sizeof(t_philo_data) * info->philos_count);
 	if (!info->data)
-		exit_with_error(MALLOC_FAIL, info, ERROR);
+		exit_with_error(MALLOC_FAIL, ERROR);
 	while (i != info->philos_count)
 	{
 		info->data[i].meals_eaten = 0;
@@ -77,9 +88,8 @@ void	init_philo_data(t_info *info)
 		set_checking_sem_name(&info->data[i], i);
 		if (create_checking_semaphore(&info->data[i]) == -1)
 		{
-			clear_created_semaphores(info, i - 1);
 			free(info->data);
-			exit_with_error(NULL, info, ERROR);
+			exit_with_error(NULL, ERROR);
 		}
 		i++;
 	}

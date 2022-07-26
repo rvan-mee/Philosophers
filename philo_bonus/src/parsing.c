@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        ::::::::            */
+/*   parsing.c                                          :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: rvan-mee <rvan-mee@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2022/07/25 16:30:16 by rvan-mee      #+#    #+#                 */
+/*   Updated: 2022/07/25 16:30:27 by rvan-mee      ########   odam.nl         */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo_bonus.h"
 #include <limits.h>
 #include <stdlib.h>
@@ -31,7 +43,7 @@ static void	parsing_error(char *error)
 */
 static int32_t	ft_atoi(char *str)
 {
-	int32_t		i;
+	int32_t	i;
 	int64_t	num;
 
 	i = 0;

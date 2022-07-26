@@ -6,7 +6,7 @@
 /*   By: rvan-mee <rvan-mee@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/14 17:09:02 by rvan-mee      #+#    #+#                 */
-/*   Updated: 2022/07/18 20:02:54 by rvan-mee      ########   odam.nl         */
+/*   Updated: 2022/07/26 16:33:01 by rvan-mee      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,14 @@
 
 # define MALLOC_FAIL "Malloc failed\n"
 # define FORK_FAIL "Fork failed\n"
-# define SEM_FAIL "Semaphore failed to create\n"
+# define SEM_FAIL "Failed to create semaphore\n"
 # define SEM_EAT_LIM "/philo_eat_limit"
 # define SEM_FORKS "/philo_forks"
 # define SEM_PRINT "/philo_print"
 
-typedef enum	e_color
+# define USE_COLORS 1
+
+typedef enum e_color
 {
 	RED,
 	GREEN,
@@ -41,7 +43,7 @@ typedef enum	e_color
 	RESET
 }	t_color;
 
-typedef enum	e_actions
+typedef enum e_actions
 {
 	EATING,
 	TAKE_FORK,
@@ -53,6 +55,7 @@ typedef enum	e_actions
 typedef struct philo_data_s {
 	int32_t		meals_eaten;
 	int64_t		last_meal_time;
+	int64_t		time_at_death;
 
 	bool		has_posted;
 	sem_t		*checking_sem;
@@ -77,7 +80,6 @@ typedef struct info_s {
 	pid_t			*philos;
 	sem_t			*forks;
 
-	uint32_t		saturated_philos;
 	pthread_t		saturation_thread;
 	sem_t			*eat_limit_sem;
 
@@ -90,7 +92,7 @@ typedef struct info_s {
 void			parse_input(int32_t argc, char **argv, t_info *info);
 
 /*				error.c					*/
-void			exit_with_error(char *error, t_info *info, int32_t exit_code);
+void			exit_with_error(char *error, int32_t exit_code);
 
 /*				signals.c				*/
 void			execute_children(char *str, t_info *info, \
@@ -109,7 +111,8 @@ void			init_philo_data(t_info *info);
 /*				time.c					*/
 int64_t			get_current_time_ms(void);
 int				time_since_start(t_info *info);
-void			wait_set_time(int time_to_wait_in_ms, t_info *info);
+void			wait_set_time(int32_t time_to_wait_in_ms);
+void			wait_till_set_time(int64_t end_time);
 
 /*				tasks.c					*/
 void			start_thinking(t_info *info);
